@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Environment
+.env
+.venv/
+venv/
+
+# IDE
+.vscode/
+.idea/
+
+# Dataset
+data/
+datasets/
+
+# Generated masks/images
+outputs/masks/
+outputs/lung_only/
+
+# Models
+outputs/checkpoints/
+*.pth
+*.pt
+*.ckpt
+
+# Results
+outputs/results/
+outputs/figures/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
