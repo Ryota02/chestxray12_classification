@@ -3,6 +3,7 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+*.ipynb_checkpoints
 
 # Third-party repositories / pretrained weights
 third_party/
@@ -36,4 +37,5 @@ outputs/figures/
 # Logs
 *.log
 
+# backup file
 *~
