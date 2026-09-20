@@ -1,0 +1,157 @@
+# ============================================================
+# Experiment
+# ============================================================
+experiment:
+  seeds:
+    - 42
+    - 43
+    - 44
+    - 45
+    - 46
+
+  # 実行するclassification experiment
+  experiments:
+    - name: original
+      enabled: true
+      mode: original
+      mask_model: null
+      mask_region: null
+
+    - name: pspnet_lung_only
+      enabled: true
+      mode: lung_only
+      mask_model: xrv_pspnet
+      mask_region: whole_lung
+
+    - name: cxas_lung_only
+      enabled: true
+      mode: lung_only
+      mask_model: xrv_cxas
+      # classificationにはwhole lungを使用
+      mask_region: whole_lung
+
+    # 必要になったらtrueにする
+    - name: pspnet_moment
+      enabled: false
+      mode: moment_standardized
+      mask_model: xrv_pspnet
+      mask_region: whole_lung
+
+    - name: cxas_moment
+      enabled: false
+      mode: moment_standardized
+      mask_model: xrv_cxas
+      mask_region: whole_lung
+
+# ============================================================
+# Device
+# ============================================================
+
+device:
+  require_cuda: true
+
+# ============================================================
+# Dataset
+# ============================================================
+
+dataset:
+  root: /media/share/Member/ueki/datasets/ChestXray12
+  train_split: train
+  test_split: test
+  manifest_dir: outputs/manifests
+
+
+  classes:
+    - Atelectasis
+    - Cardiomegaly
+    - Consolidation
+    - Edema
+    - Effusion
+    - Emphysema
+    - Fibrosis
+    - Infiltration
+    - Mass
+    - Nodule
+    - Pneumonia
+    - Pneumothorax
+
+  # 最も画像数の少ないクラス
+  reference_class: Pneumonia
+
+  # 全クラスをPneumonia枚数へ揃える
+  balance_train: true
+  balance_test: true
+
+  # balanced source dataからtrain/valを作成
+  val_ratio: 0.2
+
+# ============================================================
+# Preprocessing
+# ============================================================
+
+preprocessing:
+  mask_root: outputs/masks
+  mask_threshold: 128
+  clip_z: 3.0
+  eps: 1.0e-8
+
+# ============================================================
+# Augmentation
+# ============================================================
+
+augmentation:
+  resize_size: 256
+  image_size: 224
+  random_crop: true
+  horizontal_flip: true
+  horizontal_flip_probability: 0.5
+
+# ============================================================
+# Classification models
+# ============================================================
+
+models:
+  resnet50:
+    enabled: true
+    pretrained: true
+    batch_size: 32
+    lr: 0.0001
+
+  densenet201:
+    enabled: false
+    pretrained: true
+    batch_size: 32
+    lr: 0.0001
+
+  vit_b_16:
+    enabled: false
+    pretrained: true
+    batch_size: 32
+    lr: 0.0001
+
+# ============================================================
+# Training
+# ============================================================
+
+train:
+  epochs: 30
+  num_workers: 0
+  pin_memory: true
+  optimizer: adamw
+  weight_decay: 0.0001
+  # balanced accuracyは使用しない
+  monitor: f1_macro
+
+# ============================================================
+# Output
+# ============================================================
+
+output:
+  root: outputs/classification
+
+# ============================================================
+# Standalone evaluation
+# ============================================================
+
+evaluation:
+  checkpoint: null

@@ -2,6 +2,10 @@
 __pycache__/
 *.pyc
 *.pyo
+*.pyd
+
+# Third-party repositories / pretrained weights
+third_party/
 
 # Environment
 .env
@@ -12,26 +16,22 @@ venv/
 .vscode/
 .idea/
 
-# Dataset
+# OS
+.DS_Store
+
+# Datasets
 data/
 datasets/
 
-# Generated masks/images
+# Generated outputs
 outputs/masks/
-outputs/lung_only/
+outputs/classification/
+outputs/figures/
 
-# Models
-outputs/checkpoints/
+# Model checkpoints
 *.pth
 *.pt
 *.ckpt
 
-# Results
-outputs/results/
-outputs/figures/
-
 # Logs
 *.log
-
-# OS
-.DS_Store

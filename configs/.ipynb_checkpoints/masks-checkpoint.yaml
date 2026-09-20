@@ -1,0 +1,64 @@
+seed: 42
+
+device:
+  require_cuda: true
+
+dataset:
+  root: /media/share/Member/ueki/datasets/ChestXray12/images
+  splits:
+    - train
+    - test
+
+segmentation:
+  input_size: 512
+  models:
+    xrv_pspnet:
+      enabled: true
+      threshold: 0.5
+      save_regions:
+        - left_lung
+        - right_lung
+        - whole_lung
+
+    xrv_cxas:
+      enabled: true
+      threshold: 0.5
+      save_regions:
+        - left_lung
+        - right_lung
+        - whole_lung
+
+    niaid_resunet:
+      enabled: true
+      backend: niaid
+      repository_root: third_party/lung_cxr_segmentation
+      checkpoint: segment_lung_cxr/data/weights/cxr_lung_segment_excluding_heart_224.pt
+      input_size:
+        - 224
+        - 224
+      patch_size:
+        - 224
+        - 224
+      threshold: 0.5
+      post_process: true
+      save_regions:
+        - whole_lung
+
+  postprocess:
+    fill_holes: true
+    min_component_area_ratio: 0.002
+
+runtime:
+  overwrite: true
+  max_images: null # set null to process all images
+  sample_mode: random
+
+visualization: 
+  enable: false
+  num_images: 20
+  random_sample: true
+
+output:
+  mask_root: /media/share/Member/ueki/datasets/ChestXray12/masks
+  figure_dir: outputs/figures/masks
+  stats: true
