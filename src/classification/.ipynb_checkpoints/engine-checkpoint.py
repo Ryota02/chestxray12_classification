@@ -1,6 +1,6 @@
 import json
-
 from pathlib import Path
+from tqdm import tqdm
 
 import torch
 import torch.nn as nn
@@ -119,7 +119,7 @@ def fit_classifier(
         total_correct = 0
         total_samples = 0
 
-        for images, labels, _ in loaders["train"]:
+        for images, labels, _ in tqdm(loaders["train"], desc=f"Epoch {epoch}/{epochs} - Training"):
             images = images.to(device, non_blocking=True)
             labels = labels.to(device, non_blocking=True)
 
@@ -204,7 +204,7 @@ def fit_classifier(
                 checkpoint_dir / "best_model.pth",
             )
 
-            print("[SAVE] Best model")
+            print("[SAVE] Best model: ", checkpoint_dir / "best_model.pth")
 
     history_path = output_dir / "history.json"
 

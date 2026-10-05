@@ -3,7 +3,8 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
-*.ipynb_checkpoints
+**/.ipynb_checkpoints/
+.ipynb_checkpoints
 
 # Third-party repositories / pretrained weights
 third_party/

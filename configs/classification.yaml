@@ -1,12 +1,35 @@
 # ============================================================
+# Classification models
+# ============================================================
+
+models:
+  # resnet50:
+  #   enabled: false
+  #   pretrained: true
+  #   batch_size: 32
+  #   lr: 0.0001
+
+  densenet201:
+    enabled: true
+    pretrained: true
+    batch_size: 32
+    lr: 0.0001
+
+  vit_b_16:
+    enabled: true
+    pretrained: true
+    batch_size: 32
+    lr: 0.0001
+    
+# ============================================================
 # Experiment
 # ============================================================
 experiment:
   seeds:
-    - 42
-    - 43
-    - 44
-    - 45
+    # - 42
+    # - 43
+    # - 44
+    # - 45
     - 46
 
   # 実行するclassification experiment
@@ -27,20 +50,30 @@ experiment:
       enabled: true
       mode: lung_only
       mask_model: xrv_cxas
-      # classificationにはwhole lungを使用
       mask_region: whole_lung
 
-    # 必要になったらtrueにする
+    - name: niaid_lung_only
+      enabled: true
+      mode: lung_only
+      mask_model: niaid_resunet
+      mask_region: whole_lung
+    
     - name: pspnet_moment
-      enabled: false
+      enabled: true
       mode: moment_standardized
       mask_model: xrv_pspnet
       mask_region: whole_lung
 
     - name: cxas_moment
-      enabled: false
+      enabled: true
       mode: moment_standardized
       mask_model: xrv_cxas
+      mask_region: whole_lung
+
+    - name: niaid_moment
+      enabled: true
+      mode: moment_standardized
+      mask_model: niaid_resunet
       mask_region: whole_lung
 
 # ============================================================
@@ -55,12 +88,10 @@ device:
 # ============================================================
 
 dataset:
-  root: /media/share/Member/ueki/datasets/ChestXray12
+  root: /media/share/Member/ueki/datasets/ChestXray12/images
   train_split: train
   test_split: test
   manifest_dir: outputs/manifests
-
-
   classes:
     - Atelectasis
     - Cardiomegaly
@@ -75,7 +106,7 @@ dataset:
     - Pneumonia
     - Pneumothorax
 
-  # 最も画像数の少ないクラス
+  # The most smallest number of images
   reference_class: Pneumonia
 
   # 全クラスをPneumonia枚数へ揃える
@@ -90,7 +121,7 @@ dataset:
 # ============================================================
 
 preprocessing:
-  mask_root: outputs/masks
+  mask_root: /media/share/Member/ueki/datasets/ChestXray12/masks
   mask_threshold: 128
   clip_z: 3.0
   eps: 1.0e-8
@@ -105,29 +136,6 @@ augmentation:
   random_crop: true
   horizontal_flip: true
   horizontal_flip_probability: 0.5
-
-# ============================================================
-# Classification models
-# ============================================================
-
-models:
-  resnet50:
-    enabled: true
-    pretrained: true
-    batch_size: 32
-    lr: 0.0001
-
-  densenet201:
-    enabled: false
-    pretrained: true
-    batch_size: 32
-    lr: 0.0001
-
-  vit_b_16:
-    enabled: false
-    pretrained: true
-    batch_size: 32
-    lr: 0.0001
 
 # ============================================================
 # Training

@@ -1,8 +1,8 @@
-```python
 import argparse
 import copy
 import json
 import sys
+import time
 
 from pathlib import Path
 
@@ -256,11 +256,10 @@ def main():
 
     print("[INFO] Seeds:", seeds)
     print("[INFO] Backbones:", list(backbones.keys()))
-    print(
-        "[INFO] Experiments:",
-        [experiment["name"] for experiment in experiments],
-    )
-
+    print("[INFO] Experiments:", [experiment["name"] for experiment in experiments])
+    print("[INFO] Device: ", device)
+    
+    start = time.time()
     for seed in seeds:
         for backbone, backbone_cfg in backbones.items():
             for experiment_cfg in experiments:
@@ -272,7 +271,7 @@ def main():
                     experiment_cfg=experiment_cfg,
                     device=device,
                 )
-
-
+    end = time.time()
+    print(f"[INFO] Time: {(end-start)//60}min")
 if __name__ == "__main__":
     main()

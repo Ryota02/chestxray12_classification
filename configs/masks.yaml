@@ -49,7 +49,7 @@ segmentation:
     min_component_area_ratio: 0.002
 
 runtime:
-  overwrite: true
+  overwrite: false
   max_images: null # set null to process all images
   sample_mode: random
 

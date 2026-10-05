@@ -11,3 +11,7 @@ scipy
 matplotlib
 tqdm
 SimpleITK
+grad-cam
+lime
+shap
+opencv-python

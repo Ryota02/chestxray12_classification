@@ -1,0 +1,86 @@
+classification_config: configs/classification.yaml
+
+seed: 42
+
+split: test
+
+# 最初は5枚
+num_images: 6
+
+sample_seed: 42
+
+
+backbones:
+  - resnet50
+  # - densenet201
+  # - vit_b_16
+
+
+experiments:
+  - original
+  - pspnet_lung_only
+  - cxas_lung_only
+  - niaid_lung_only
+  - pspnet_moment
+  - cxas_moment
+  - niaid_moment
+
+
+methods:
+
+  gradcam:
+    enabled: true
+
+  gradcam_plus_plus:
+    enabled: true
+
+  lime:
+    enabled: true
+
+  shap:
+    enabled: true
+
+  attention_rollout:
+    enabled: true
+
+
+lime:
+  num_samples: 500
+  num_features: 10
+
+
+shap:
+  nsamples: 64
+  background_size: 4
+
+
+checkpoint:
+  root: outputs/classification
+  filename: null
+
+report:
+  input_root: outputs/xai
+  image_pattern: "*_xai.png"
+    
+  page:
+    landscape: true
+    margin_left: 20
+    margin_right: 20
+    margin_top: 30
+    margin_bottom: 30
+    
+  header:
+    enabled: true
+    
+  footer:
+    enabled: true
+    
+  grid:
+    columns: 1
+    rows: 2
+    horizontal_spacing: 0
+    vertical_spacing: 12
+    caption_height: 0
+
+output:
+  root: outputs/xai

@@ -1,0 +1,7 @@
+case_id,relative_path,backbone,experiment,predicted_class_index,predicted_class,predicted_probability,xai_target_class,xai_target_source,output_path
+test__Effusion__00007629_000,test/Effusion/00007629_000.png,resnet50,cxas_moment,0,Atelectasis,0.5912393927574158,Atelectasis,predicted_class,outputs/xai/resnet50/cxas_moment/seed42/test__Effusion__00007629_000_xai.png
+test__Pneumothorax__00001006_020,test/Pneumothorax/00001006_020.png,resnet50,cxas_moment,7,Infiltration,0.3072343170642853,Infiltration,predicted_class,outputs/xai/resnet50/cxas_moment/seed42/test__Pneumothorax__00001006_020_xai.png
+test__Cardiomegaly__00013627_005,test/Cardiomegaly/00013627_005.png,resnet50,cxas_moment,8,Mass,0.4223935306072235,Mass,predicted_class,outputs/xai/resnet50/cxas_moment/seed42/test__Cardiomegaly__00013627_005_xai.png
+test__Edema__00015666_001,test/Edema/00015666_001.png,resnet50,cxas_moment,3,Edema,0.38216161727905273,Edema,predicted_class,outputs/xai/resnet50/cxas_moment/seed42/test__Edema__00015666_001_xai.png
+test__Infiltration__00014626_040,test/Infiltration/00014626_040.png,resnet50,cxas_moment,2,Consolidation,0.20576798915863037,Consolidation,predicted_class,outputs/xai/resnet50/cxas_moment/seed42/test__Infiltration__00014626_040_xai.png
+test__Mass__00001517_009,test/Mass/00001517_009.png,resnet50,cxas_moment,8,Mass,0.4821016788482666,Mass,predicted_class,outputs/xai/resnet50/cxas_moment/seed42/test__Mass__00001517_009_xai.png
