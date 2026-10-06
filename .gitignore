@@ -38,3 +38,4 @@ outputs/*
 # backup file
 *~output/
 .ipynb_checkpoints/
+.ipynb_checkpoints/
