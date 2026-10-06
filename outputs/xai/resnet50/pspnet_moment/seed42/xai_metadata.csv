@@ -1,7 +1,0 @@
-case_id,relative_path,backbone,experiment,predicted_class_index,predicted_class,predicted_probability,xai_target_class,xai_target_source,output_path
-test__Effusion__00007629_000,test/Effusion/00007629_000.png,resnet50,pspnet_moment,4,Effusion,0.36850517988204956,Effusion,predicted_class,outputs/xai/resnet50/pspnet_moment/seed42/test__Effusion__00007629_000_xai.png
-test__Pneumothorax__00001006_020,test/Pneumothorax/00001006_020.png,resnet50,pspnet_moment,6,Fibrosis,0.976296603679657,Fibrosis,predicted_class,outputs/xai/resnet50/pspnet_moment/seed42/test__Pneumothorax__00001006_020_xai.png
-test__Cardiomegaly__00013627_005,test/Cardiomegaly/00013627_005.png,resnet50,pspnet_moment,8,Mass,0.9272502064704895,Mass,predicted_class,outputs/xai/resnet50/pspnet_moment/seed42/test__Cardiomegaly__00013627_005_xai.png
-test__Edema__00015666_001,test/Edema/00015666_001.png,resnet50,pspnet_moment,3,Edema,0.5207474231719971,Edema,predicted_class,outputs/xai/resnet50/pspnet_moment/seed42/test__Edema__00015666_001_xai.png
-test__Infiltration__00014626_040,test/Infiltration/00014626_040.png,resnet50,pspnet_moment,3,Edema,0.9510048031806946,Edema,predicted_class,outputs/xai/resnet50/pspnet_moment/seed42/test__Infiltration__00014626_040_xai.png
-test__Mass__00001517_009,test/Mass/00001517_009.png,resnet50,pspnet_moment,10,Pneumonia,0.6331629753112793,Pneumonia,predicted_class,outputs/xai/resnet50/pspnet_moment/seed42/test__Mass__00001517_009_xai.png
