@@ -309,24 +309,11 @@ def find_experiment(
     classification_cfg,
     experiment_name,
 ):
-
-    experiments = (
-        classification_cfg[
-            "experiment"
-        ][
-            "experiments"
-        ]
-    )
+    
+    experiments = classification_cfg["experiment"]["experiments"]
 
     for experiment in experiments:
-
-        if (
-            experiment[
-                "name"
-            ]
-            == experiment_name
-        ):
-
+        if experiment["name"] == experiment_name:
             return experiment
 
     raise KeyError(

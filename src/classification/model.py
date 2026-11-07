@@ -30,9 +30,7 @@ def build_classifier(
         )
 
         model = resnet50(weights=weights)
-
         in_features = model.fc.in_features
-
         model.fc = nn.Linear(
             in_features,
             num_classes,

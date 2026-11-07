@@ -27,6 +27,7 @@ from src.classification.engine import (
 from src.classification.plots import plot_confusion_matrix
 from src.utils.config import load_config
 from src.utils.seed import get_device, set_seed
+from src.utils.utils import calculate_class_weights
 
 
 def run_single_experiment(
@@ -45,17 +46,22 @@ def run_single_experiment(
     mask_model = experiment_cfg.get("mask_model")
     mask_region = experiment_cfg.get("mask_region")
 
-    cfg["train"]["batch_size"] = int(
-        backbone_cfg.get("batch_size", 32)
-    )
-    cfg["train"]["lr"] = float(
-        backbone_cfg.get("lr", 1e-4)
-    )
+    cfg["train"]["batch_size"] = int(backbone_cfg.get("batch_size", 32))
+    cfg["train"]["lr"] = float(backbone_cfg.get("lr", 1e-4))
 
     class_names = list(cfg["dataset"]["classes"])
 
+    if cfg["dataset"]["balance_train"] and cfg["dataset"]["balance_test"]:
+        print("[INFO] Use balanced Dataset Manifest")
+        balance = "balanced"
+        
+    else: 
+        print("[INFO] Use imbalanced Dataset Manifest")
+        balance = "imbalanced"
+        
     manifest_path = (
         Path(cfg["dataset"]["manifest_dir"])
+        / balance
         / f"seed{seed}.csv"
     )
 
@@ -92,6 +98,17 @@ def run_single_experiment(
         manifest=manifest_path,
         experiment_cfg=experiment_cfg,
     )
+    
+    weighted_ce_cfg = cfg["train"].get("weighted_ce", {})
+    
+    if weighted_ce_cfg.get("enabled", False):
+        class_weights = calculate_class_weights(
+                train_dataset=datasets["train"],
+                num_classes=len(class_names),
+                device=device,
+            )
+    else:
+        class_weights = None
 
     loaders = build_classification_loaders(
         datasets=datasets,
@@ -103,9 +120,7 @@ def run_single_experiment(
     model = build_classifier(
         backbone=backbone,
         num_classes=len(class_names),
-        pretrained=bool(
-            backbone_cfg.get("pretrained", True)
-        ),
+        pretrained=bool(backbone_cfg.get("pretrained", True)),
     ).to(device)
 
     metadata = {
@@ -127,6 +142,7 @@ def run_single_experiment(
         class_names=class_names,
         output_dir=output_dir,
         metadata=metadata,
+        class_weights=class_weights,
     )
 
     # Best model
@@ -142,9 +158,7 @@ def run_single_experiment(
         weights_only=False,
     )
 
-    model.load_state_dict(
-        checkpoint["model_state_dict"]
-    )
+    model.load_state_dict(checkpoint["model_state_dict"])
 
     # Test
     result = evaluate_classifier(
@@ -161,10 +175,7 @@ def run_single_experiment(
         / "test_metrics.json"
     )
 
-    with metrics_path.open(
-        "w",
-        encoding="utf-8",
-    ) as f:
+    with metrics_path.open("w", encoding="utf-8") as f:
         json.dump(
             metrics,
             f,
@@ -172,16 +183,12 @@ def run_single_experiment(
         )
 
     # Predictions
-    probabilities = np.asarray(
-        result["y_probability"]
-    )
+    probabilities = np.asarray(result["y_probability"])
 
     test_dataset = datasets["test"]
     rows = []
 
-    for result_index, dataset_index in enumerate(
-        result["sample_indices"]
-    ):
+    for result_index, dataset_index in enumerate(result["sample_indices"]):
         sample = (
             test_dataset
             .dataframe
@@ -204,10 +211,7 @@ def run_single_experiment(
 
         rows.append(row)
 
-    predictions_path = (
-        output_dir
-        / "test_predictions.csv"
-    )
+    predictions_path = output_dir / "test_predictions.csv"
 
     pd.DataFrame(rows).to_csv(
         predictions_path,
@@ -233,9 +237,7 @@ def main():
 
     cfg = load_config(args.config)
 
-    device = get_device(
-        cfg.get("device", {}).get("require_cuda", True)
-    )
+    device = get_device(cfg.get("device", {}).get("require_cuda", True))
 
     seeds = [
         int(seed)
@@ -272,6 +274,6 @@ def main():
                     device=device,
                 )
     end = time.time()
-    print(f"[INFO] Time: {(end-start)//60}min")
+    print(f"[INFO] Time: {(end-start)/60}min")
 if __name__ == "__main__":
     main()

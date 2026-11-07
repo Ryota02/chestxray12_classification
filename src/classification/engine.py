@@ -88,12 +88,13 @@ def fit_classifier(
     class_names,
     output_dir,
     metadata,
+    class_weights=None,
 ):
     output_dir = Path(output_dir)
     checkpoint_dir = output_dir / "checkpoints"
     checkpoint_dir.mkdir(parents=True, exist_ok=True)
 
-    criterion = nn.CrossEntropyLoss()
+    criterion = nn.CrossEntropyLoss(weight=class_weights)
     optimizer = build_optimizer(model, cfg)
 
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(

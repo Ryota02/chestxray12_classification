@@ -3,6 +3,7 @@ import csv
 import random
 import sys
 import numpy as np
+import time
 
 from pathlib import Path
 
@@ -39,9 +40,7 @@ def main():
 
     xai_cfg = load_config(args.config)
 
-    classification_cfg = load_config(
-        xai_cfg["classification_config"]
-    )
+    classification_cfg = load_config(xai_cfg["classification_config"])
 
     device = torch.device(
         "cuda"
@@ -61,11 +60,18 @@ def main():
     classes = classification_cfg["dataset"]["classes"]
     num_classes = len(classes)
 
+    if classification_cfg["dataset"]["balance_train"] and classification_cfg["dataset"]["balance_test"]:
+        print("[INFO] Use balanced Dataset Manifest")
+        balance = "balanced"
+        
+    else: 
+        print("[INFO] Use imbalanced Dataset Manifest")
+        balance = "imbalanced"
+
     # Manifest
     manifest_path = (
-        Path(
-            classification_cfg["dataset"]["manifest_dir"]
-        )
+        Path(classification_cfg["dataset"]["manifest_dir"])
+        / balance
         / f"seed{seed}.csv"
     )
 
@@ -109,10 +115,9 @@ def main():
     lime_cfg = xai_cfg.get("lime", {})
     shap_cfg = xai_cfg.get("shap", {})
 
-    output_root = Path(
-        xai_cfg["output"]["root"]
-    )
-
+    output_root = Path(xai_cfg["output"]["root"])
+    
+    start = time.time()
     for backbone in xai_cfg["backbones"]:
         print("\n========================================")
         print("[INFO] Backbone:", backbone)
@@ -442,7 +447,8 @@ def main():
 
             if torch.cuda.is_available():
                 torch.cuda.empty_cache()
-
+    end = time.time()
+    print(f"[INFO] Time: {(end-start)/60:.3f}min")
 
 if __name__ == "__main__":
     main()

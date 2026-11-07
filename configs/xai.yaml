@@ -1,65 +1,13 @@
-classification_config: configs/classification.yaml
+classification_config: configs/classification/experimentB.yaml
 
 seed: 42
 
-split: test
-
-# 最初は5枚
-num_images: 6
-
-sample_seed: 42
-
-
-backbones:
-  - resnet50
-  # - densenet201
-  # - vit_b_16
-
-
-experiments:
-  - original
-  - pspnet_lung_only
-  - cxas_lung_only
-  - niaid_lung_only
-  - pspnet_moment
-  - cxas_moment
-  - niaid_moment
-
-
-methods:
-
-  gradcam:
-    enabled: true
-
-  gradcam_plus_plus:
-    enabled: true
-
-  lime:
-    enabled: true
-
-  shap:
-    enabled: true
-
-  attention_rollout:
-    enabled: true
-
-
-lime:
-  num_samples: 500
-  num_features: 10
-
-
-shap:
-  nsamples: 64
-  background_size: 4
-
-
 checkpoint:
-  root: outputs/classification
+  root: outputs/experimentB
   filename: null
 
 report:
-  input_root: outputs/xai
+  input_root: outputs/experimentB/xai
   image_pattern: "*_xai.png"
     
   page:
@@ -83,4 +31,45 @@ report:
     caption_height: 0
 
 output:
-  root: outputs/xai
+  root: outputs/experimentB/xai
+
+split: test
+
+# 最初は5枚
+num_images: 6
+
+sample_seed: 42
+
+backbones:
+  - resnet50
+  - densenet201
+  - vit_b_16
+
+experiments: 
+  - original
+  - pspnet_lung_only
+  - cxas_lung_only
+  - niaid_lung_only
+  - pspnet_moment
+  - cxas_moment
+  - niaid_moment
+
+methods:
+  gradcam:
+    enabled: true
+
+  gradcam_plus_plus:
+    enabled: true
+
+  lime:
+    enabled: true
+    num_samples: 500
+    num_features: 10
+
+  shap:
+    enabled: true
+    nsamples: 64
+    background_size: 4
+
+  attention_rollout:
+    enabled: true

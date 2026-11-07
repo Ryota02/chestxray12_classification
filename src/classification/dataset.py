@@ -87,50 +87,114 @@ class ChestXrayManifestDataset(Dataset):
 
 
     def _build_transform(self, training):
-        aug_cfg = self.cfg["augmentation"]
-
+        aug_cfg = self.cfg.get(
+            "augmentation",
+            {},
+        )
+    
         resize_size = int(
-            aug_cfg.get("resize_size", 256)
+            aug_cfg.get(
+                "resize_size",
+                256,
+            )
         )
+    
         image_size = int(
-            aug_cfg.get("image_size", 224)
+            aug_cfg.get(
+                "image_size",
+                224,
+            )
         )
-
         transform_list = [
             transforms.Resize(
-                (resize_size, resize_size)
+                (
+                    resize_size,
+                    resize_size,
+                )
             )
         ]
-
+        
         if training:
-            if aug_cfg.get("random_crop", True):
+            # ============================================
+            # Rotation
+            # ============================================
+            rotation_cfg = (
+                aug_cfg.get("rotation", {})
+            )
+        
+            if rotation_cfg.get("enabled", False):
+        
                 transform_list.append(
-                    transforms.RandomCrop(image_size)
-                )
-            else:
-                transform_list.append(
-                    transforms.CenterCrop(image_size)
-                )
-
-            if aug_cfg.get("horizontal_flip", True):
-                flip_probability = float(
-                    aug_cfg.get(
-                        "horizontal_flip_probability",
-                        0.5,
+                    transforms.RandomRotation(
+                        degrees=float(
+                            rotation_cfg.get("degrees", 5.0)
+                        ),
+                        expand=False,
+                        fill=0,
                     )
                 )
-
+        
+            # ============================================
+            # Crop
+            # Always produces image_size x image_size
+            # ============================================
+        
+            if aug_cfg.get("random_crop", False):
+                transform_list.append(transforms.RandomCrop(image_size))
+        
+            else:
+        
+                transform_list.append(
+                    transforms.CenterCrop(
+                        image_size
+                    )
+                )
+        
+            # ============================================
+            # Horizontal flip
+            # ============================================
+        
+            if aug_cfg.get("horizontal_flip", True):
+        
                 transform_list.append(
                     transforms.RandomHorizontalFlip(
-                        p=flip_probability
+                        p=float(aug_cfg.get("horizontal_flip_probability", 0.5))
                     )
                 )
-
+        
+            # ============================================
+            # Brightness / Contrast
+            # ============================================
+        
+            brightness_contrast_cfg = (
+                aug_cfg.get(
+                    "brightness_contrast",
+                    {},
+                )
+            )
+        
+            if brightness_contrast_cfg.get(
+                "enabled",
+                False,
+            ):
+        
+                transform_list.append(
+                    transforms.RandomApply(
+                        [
+                            transforms.ColorJitter(
+                                brightness=float(brightness_contrast_cfg.get("brightness", 0.1)),
+                                contrast=float(brightness_contrast_cfg.get("contrast", 0.1)),)
+                        ],
+                        p=float(brightness_contrast_cfg.get("probability", 0.5)),
+                    )
+                )
+        
         else:
             transform_list.append(
                 transforms.CenterCrop(image_size)
             )
-
+        
+        
         transform_list.extend(
             [
                 transforms.ToTensor(),
@@ -140,9 +204,8 @@ class ChestXrayManifestDataset(Dataset):
                 ),
             ]
         )
-
+        
         return transforms.Compose(transform_list)
-
 
     def __len__(self):
         return len(self.dataframe)
@@ -155,7 +218,15 @@ class ChestXrayManifestDataset(Dataset):
         image_path = self.data_root / relative_path
         label = int(row["label"])
 
-        image = Image.open(image_path)
+        try: 
+            with Image.open(image_path) as image_pil: 
+                image = image_pil.copy()
+                
+        except OSError as e: 
+            raise RuntimeError(
+                "Failed to open CXR image. \n"
+                f"Image: {image_path}"
+            ) from e
 
         if self.mode == "original":
             image = image.convert("RGB")
